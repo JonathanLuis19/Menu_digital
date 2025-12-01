@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - LUIGGI'S</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --gold-1: #f3d27a;
+      --gold-2: #d6af60;
+      --gold-3: #b4893c;
+      --black-1: #0b0b0d;
+      --black-2: #111113;
+      --ink: #f5f5f5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(1000px 600px at 90% -10%, rgba(214,175,96,.14), transparent 70%),
+                  radial-gradient(800px 500px at -10% 110%, rgba(180,137,60,.10), transparent 70%),
+                  linear-gradient(180deg, #0a0a0b, #0f0f11 35%, #0a0a0b);
+      min-height: 100vh;
+      padding: 30px;
+      color: var(--ink);
+    }
+    
+    h1 {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2), var(--gold-3));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .container {
+      display: flex;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .formulario-section {
+      flex: 0 0 380px;
+      position: sticky;
+      top: 30px;
+      height: fit-content;
+    }
+    
+    .grid-section {
+      flex: 1;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+    
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 20px;
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold-1), var(--gold-3));
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(214,175,96,.3);
+    }
+    
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+      border: 2px solid rgba(243,210,122,.2);
+    }
+    
+    .card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .card h3 {
+      margin: 15px 0 10px;
+      color: var(--gold-1);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .card p {
+      margin: 8px 0;
+      color: rgba(255,255,255,.7);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .card p strong {
+      color: var(--gold-2);
+    }
+    
+    .precio {
+      font-size: 1.8rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin: 15px 0;
+    }
+    
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .btn-icon {
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-icon:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn-edit {
+      color: #111;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+    
+    .btn-edit:hover {
+      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+    }
+    
+    .btn-delete {
+      color: #111;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    }
+    
+    .btn-delete:hover {
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    }
+    
+    .form-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .form-card h2 {
+      margin: 0 0 25px 0;
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.5rem;
+      text-align: center;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(243,210,122,.3);
+    }
+    
+    .form-card input[type="text"],
+    .form-card input[type="number"],
+    .form-card select,
+    .form-card textarea {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 14px;
+      border: 2px solid rgba(243,210,122,.2);
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,.05);
+      color: var(--ink);
+    }
+    
+    .form-card input[type="file"] {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 12px;
+      border: 2px dashed rgba(243,210,122,.3);
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      background: rgba(255,255,255,.03);
+      transition: all 0.3s ease;
+      color: var(--ink);
+    }
+    
+    .form-card input:focus, .form-card select:focus {
+      outline: none;
+      border-color: var(--gold-1);
+      box-shadow: 0 0 0 3px rgba(243,210,122,.1);
+    }
+    
+    .preview-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 2px solid rgba(243,210,122,.3);
+    }
+    
+    .preview-label {
+      display: block;
+      color: rgba(255,255,255,.6);
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .btn-submit {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+      color: #111;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(243,210,122,.4);
+    }
+    
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(243,210,122,.6);
+    }
+
+    .btn-category {
+      background: rgba(243,210,122,.1);
+      color: var(--gold-1);
+      border: 1px solid rgba(243,210,122,.3);
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .btn-category:hover {
+      background: rgba(243,210,122,.2);
+      border-color: var(--gold-1);
+    }
+    
+    .btn-cancel {
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.8);
+      border: none;
+      padding: 12px;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 10px;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-cancel:hover {
+      background: rgba(255,255,255,.15);
+      transform: translateY(-2px);
+    }
+    
+    .help-text {
+      display: block;
+      color: rgba(255,255,255,.5);
+      font-size: 0.8rem;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255,255,255,.1);
+      border: none;
+      color: var(--ink);
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,107,107,.3);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .container {
+        flex-direction: column;
+      }
+      
+      .formulario-section {
+        position: relative;
+        top: 0;
+        flex: 1;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+    }
+    .imagen{
+      width: 50px;
+      height: 50px; 
+    }
+    .form-card select option {
+  background: #1a1a1c;
+  color: var(--ink);
+}
+    
+  </style>
+</head>
+<body>
+
+<div class="header-row" style="position:relative; width:100%; padding:0 0 24px 0;">
+
+  <!-- TÍTULO -->
+  <div style="display:flex; align-items:center; gap:12px;">
+    <h1 style="margin:0; color:white; font-size:28px; font-weight:800; letter-spacing:1px; display:flex; align-items:center; gap:10px;">
+      <i class="fas fa-utensils" style="color:var(--gold-1); font-size:28px;"></i>
+      Panel de Administración - LUIGGI'S
+    </h1>
+  </div>
+
+  <!-- BOTÓN CERRAR SESIÓN (ahora sí con fondo bonito y elegante) -->
+  <a href="{{ url_for('logout') }}"
+     style="
+       position:absolute;
+       top:0;
+       right:0;
+       display:inline-flex;
+       align-items:center;
+       gap:8px;
+       padding:10px 14px;
+       color:white;
+       text-decoration:none;
+       font-weight:600;
+       border-radius:10px;
+       transition:all .18s ease;
+
+       /* NUEVO FONDO ELEGANTE */
+       background:rgba(0, 0, 0, 0.45);
+
+       /* borde dorado suave */
+       border:1px solid rgba(243,210,122,0.35);
+
+       backdrop-filter:blur(4px); /* efecto premium tipo glass */
+     "
+     onmouseover="this.style.background='rgba(0,0,0,0.65)'; this.style.transform='translateY(-2px)';"
+     onmouseout="this.style.background='rgba(0,0,0,0.45)'; this.style.transform='translateY(0)';"
+     aria-label="Cerrar sesión">
+    <i class="fas fa-sign-out-alt" style="color:var(--gold-1);"></i>
+    Cerrar sesión
+  </a>
+</div>
+
+
+
+
+
+  <div class="container">
+  <div class="formulario-section">
+    <div class="form-card">
+      <h2>
+        <i class="fas fa-{{ 'edit' if food_editar else 'plus-circle' }}"></i>
+        {{ 'Editar Comida' if food_editar else 'Agregar Comida' }}
+      </h2>
+
+      {% if food_editar %}
+      
+      <form method="POST" action="{{ url_for('editar', id=food_editar.id) }}" enctype="multipart/form-data">
+
+        <input type="text" name="nombre" placeholder="Nombre de la comida" value="{{ food_editar.name }}" required>
+
+        <!-- CAMPO DE INGREDIENTES (solo textarea, corregido) -->
+        <textarea name="ing1" placeholder="Ingredientes principales" required>{{ food_editar.ingredients }}</textarea>
+
+        <select name="id_category" required>
+          <option value="">Selecciona una categoría</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if food_editar.id_category == cat.id %}selected{% endif %}>
+            {{ cat.type }}
+          </option>
+          {% endfor %}
+        </select>
+
+        {% if food_editar.image %}
+        <div>
+          <img src="{{ url_for('static', filename=food_editar.image) }}" class="preview-img">
+          <span class="preview-label"><i class="fas fa-image"></i> Imagen actual</span>
+        </div>
+        {% endif %}
+
+        <input type="file" name="imagen" accept="image/*">
+        <span class="help-text"><i class="fas fa-info-circle"></i> Opcional: subir nueva imagen</span>
+
+        <input type="number" name="precio" placeholder="Precio (USD)" step="0.01"  min="0"
+          value="{{ food_editar.price }}" required>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Actualizar</button>
+        <a href="{{ url_for('ver') }}" class="btn-cancel"><i class="fas fa-times"></i> Cancelar</a>
+      </form>
+
+      {% else %}
+
+      <form method="POST" action="{{ url_for('guardar') }}" enctype="multipart/form-data">
+        <input type="text" name="nombre" placeholder="Nombre de la comida" required>
+
+        <!-- TEXTAREA TAMBIÉN EN NUEVO REGISTRO -->
+        <textarea name="ing1" placeholder="Ingredientes principales" required></textarea>
+
+        <select name="id_category" required>
+          <option value="">Selecciona una categoría</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}">{{ cat.type }}</option>
+          {% endfor %}
+        </select>
+
+        <input type="file" name="imagen" accept="image/*">
+        <span class="help-text"><i class="fas fa-info-circle"></i> Formatos: JPG, PNG, GIF, WEBP</span>
+
+        <input type="number" name="precio" placeholder="Precio (USD)" step="0.01" min="0" required>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-plus"></i> Guardar</button>
+      </form>
+
+      {% endif %}
+
+      <button class="btn-category" onclick="openCategoryModal()">
+        <i class="fas fa-tags"></i> Gestionar Categorías
+      </button>
+    </div>
+  </div>
+
+
+   <!-- VIEW PRODUCTS POR CATEGORÍA -->
+<div class="grid-section">
+
+  {% for categoria, lista in foods_by_category.items() %}
+  
+    <h2 class="category-title">
+      <i class="fas fa-tag"></i> {{ categoria }}
+    </h2>
+
+    <div class="grid">
+      {% for c in lista %}
+        <div class="card">
+          
+          {% if c.image %}
+          <img src="{{ url_for('static', filename=c.image) }}"
+               alt="{{ c.name }}"
+               onerror="this.src='https://via.placeholder.com/250x180/0a0a0b/f3d27a?text=Sin+Imagen'">
+          {% else %}
+          <img src="https://via.placeholder.com/250x180/0a0a0b/f3d27a?text=Sin+Imagen" alt="Sin imagen">
+          {% endif %}
+
+          <h3>{{ c.name }}</h3>
+          <p><strong><i class="fas fa-list"></i> Ingredientes:</strong> {{ c.ingredients }}</p>
+          <p class="precio"><i class="fas fa-dollar-sign"></i>{{ "%.2f"|format(c.price) }}</p>
+
+          <div class="actions">
+            <a href="{{ url_for('ver', editar=c.id) }}" class="btn-icon btn-edit" title="Editar">
+              <i class="fas fa-edit"></i>
+            </a>
+            <form method="POST" action="{{ url_for('eliminar', id=c.id) }}" 
+                  style="margin: 0; display: inline-block;"
+                  onsubmit="return confirm('¿Seguro que deseas eliminar esta comida?');">
+              <button type="submit" class="btn-icon btn-delete" title="Eliminar">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endfor %}
+</div>
+
+  </div>
+
+  <!-- Modal Categorías -->
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+      <h2 style="margin-bottom: 20px; text-align: center;">
+        <i class="fas fa-tags"></i> Agregar Categoría
+      </h2>
+      <form method="POST" action="{{ url_for('tipo') }}">
+        <input type="text" name="type" placeholder="Nombre de la categoría (ej: Postres, Bebidas)" required style="width: 100%; margin-bottom: 15px; padding: 14px; border: 2px solid rgba(243,210,122,.2); border-radius: 8px; font-size: 14px; background: rgba(255,255,255,.05); color: var(--ink);">
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-plus"></i> Agregar Categoría
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openCategoryModal() {
+      document.getElementById('categoryModal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('categoryModal').classList.remove('active');
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('categoryModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCategoryModal();
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LUIGGI'S — Menú Black & Gold</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --gold-1:#f3d27a;
+      --gold-2:#d6af60;
+      --gold-3:#b4893c;
+      --black-1:#0b0b0d;
+      --black-2:#111113;
+      --ink:#f5f5f5;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Montserrat", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(1000px 600px at 90% -10%, rgba(214,175,96,.14), transparent 70%),
+        radial-gradient(800px 500px at -10% 110%, rgba(180,137,60,.10), transparent 70%),
+        linear-gradient(180deg, #0a0a0b, #0f0f11 35%, #0a0a0b);
+    }
+    .gold-text{
+      background:linear-gradient(135deg,var(--gold-1),var(--gold-2),var(--gold-3));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .gold-grad{ background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); }
+    .gold-stroke{ box-shadow:0 0 0 1px rgba(243,210,122,.25), inset 0 0 0 1px rgba(243,210,122,.08); }
+    .hero-wrap{position:relative; isolation:isolate;}
+    .hero-wrap:before{
+      content:""; position:absolute; inset:-2rem -2rem auto auto; height:420px; width:420px;
+      background:conic-gradient(from 180deg, rgba(243,210,122,.18), transparent 40%);
+      filter:blur(30px); border-radius:50%; z-index:-1;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:1.25rem;
+      backdrop-filter:blur(8px);
+      transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+    }
+    .card:hover{ 
+      transform:translateY(-6px); 
+      box-shadow:0 16px 32px rgba(0,0,0,.45), 0 0 0 1px rgba(214,175,96,.22); 
+    }
+    .price-badge{
+      position:absolute; top:.85rem; right:.85rem;
+      background:linear-gradient(135deg,var(--gold-1),var(--gold-3));
+      color:#111; padding:.45rem .75rem; border-radius:9999px; font-weight:800;
+      box-shadow:0 8px 18px rgba(0,0,0,.35);
+    }
+    .tab{
+      border:1px solid rgba(243,210,122,.25);
+      background:rgba(255,255,255,.06);
+      transition:all .2s;
+    }
+    .tab.active{ 
+      background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); 
+      color:#111; font-weight:800; 
+    }
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(243,210,122,.55),transparent)}
+    .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+    /* Opcional: previene que todo el body se desplace inesperadamente */
+    body, html {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-black/70 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Menú hamburguesa -->
+        
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Luiggi's"
+          class="h-12 w-12 rounded-full gold-stroke object-cover">
+        <div>
+          <div class="text-[11px] tracking-[0.25em] text-white/70">SOUL FOOD</div>
+          <div class="text-2xl sm:text-3xl font-extrabold gold-text" style="font-family:'Playfair Display', serif;">
+            LUIGGI'S
+          </div>
+        </div>
+      </div>
+      <a href="https://wa.me/593981070664" target="_blank"
+        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl gold-grad text-black font-semibold shadow">
+        Pedir por WhatsApp
+      </a>
+    </div>
+  </header>
+
+  <!-- Sidebar menú categorías -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-black/95 backdrop-blur-xl border-r border-white/10 z-50 transform -translate-x-full transition-transform duration-300">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-xl font-bold gold-text" style="font-family:'Playfair Display', serif;">Categorías</h2>
+      <button id="closeMenu" class="text-white/70 hover:text-white text-3xl leading-none">&times;</button>
+    </div>
+
+    <nav class="space-y-2">
+      <!-- Todo -->
+      <button class="sidebar-item active w-full text-left px-4 py-3 rounded-xl transition-all" data-cat="all">
+        <span class="text-2xl mr-3">🍽️</span>
+        <span class="font-semibold">Todo el Menú</span>
+      </button>
+
+      <!-- Categorías dinámicas -->
+      {% for cat in categories %}
+      <button class="sidebar-item w-full text-left px-4 py-3 rounded-xl transition-all" data-cat="{{ cat.type }}">
+        <span class="text-2xl mr-3">
+          {% if 'Bebida' in cat.type %}🥤
+          {% elif 'Rápida' in cat.type or 'Rapida' in cat.type %}🍔
+          {% elif 'Postre' in cat.type %}🍰
+          {% elif 'Chifa' in cat.type %}🥡
+          {% elif 'Especial' in cat.type %}⭐
+          {% elif 'Caliente' in cat.type %}☕
+          {% else %}🍴
+          {% endif %}
+        </span>
+        <span class="font-semibold">{{ cat.type }}</span>
+      </button>
+      {% endfor %}
+    </nav>
+
+    <div class="mt-8 pt-6 border-t border-white/10">
+      <a href="https://wa.me/593981070664" target="_blank"
+        class="block w-full text-center px-4 py-3 rounded-xl gold-grad text-black font-semibold">
+        📱 Contactar por WhatsApp
+      </a>
+    </div>
+  </div>
+</aside>
+
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity duration-300" onclick="closeSidebar()"></div>
+
+  <!-- Hero editorial y contenido centrado -->
+  <div class="max-w-7xl mx-auto">
+    <section class="hero-wrap">
+      <div class="px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight gold-text" style="font-family:'Playfair Display', serif;">
+            Elegancia & Sabor
+          </h1>
+          <p class="mt-4 text-white/75 text-lg max-w-xl">
+            Menú digital de fast food con alma gourmet. Ingredientes de calidad, presentación premium y atención rápida.
+          </p>
+          <div class="mt-6 gold-stroke inline-flex rounded-xl">
+            <input id="search" type="search" placeholder="Buscar plato o ingrediente…" class="bg-white/5 text-white placeholder-white/50 px-4 py-3 rounded-l-xl focus:outline-none">
+            <button id="clear" class="px-4 py-3 rounded-r-xl bg-white/10 hover:bg-white/20">Limpiar</button>
+          </div>
+        </div>
+        <div class="relative">
+          <img src="{{ url_for('static', filename='images/pp.jpg') }}" alt="Hero" class="w-full h-72 object-cover rounded-3xl card">
+          <div class="absolute inset-0 rounded-3xl" style="box-shadow: inset 0 0 0 1px rgba(214,175,96,.18);"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs de categorías -->
+    <nav class="sticky top-[68px] z-40 bg-black/70 backdrop-blur border-y border-white/10">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div id="catTabs" class="flex gap-2 overflow-x-auto py-3 no-scrollbar">
+          <button class="tab active px-4 py-2 rounded-full text-sm" data-cat="all">Todo</button>
+          {% for categoria in foods_by_category.keys() %}
+          <button class="tab px-4 py-2 rounded-full text-sm" data-cat="{{ categoria }}">{{ categoria }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Grid de productos -->
+    
+    <main class="px-4 sm:px-6 lg:px-8 py-10">
+      
+      <div id="menuGrid" class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        {% for categoria, items in foods_by_category.items() %}
+        {% for food in items %}
+        <article class="card group relative" data-cat="{{ categoria }}" data-name="{{ (food.name + ' ' + food.ingredients)|lower }}">
+          <div class="relative">
+            {% if food.image %}
+            <img src="{{ url_for('static', filename=food.image) }}" alt="{{ food.name }}" class="w-full h-56 object-cover group-hover:opacity-90 transition">
+            {% else %}
+            <img src="https://via.placeholder.com/400x300/0a0a0b/f3d27a?text={{ food.name }}" alt="{{ food.name }}" class="w-full h-56 object-cover group-hover:opacity-90 transition">
+            {% endif %}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-t-[1.25rem]"></div>
+            <div class="price-badge">$ {{ "%.2f"|format(food.price) }}</div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="text-lg font-semibold leading-snug" style="font-family:'Playfair Display', serif;">{{ food.name }}</h3>
+              <span class="text-[11px] text-white/60">{{ categoria }}</span>
+            </div>
+            <p class="mt-1 text-sm text-white/70 line-clamp-2">{{ food.ingredients }}</p>
+            <div class="mt-4 flex items-center justify-between">
+              <button class="px-4 py-2 rounded-xl gold-grad text-black font-semibold"
+                onclick="openItem('{{ food.name|replace("'", "\\'") }}', '{{ food.ingredients|replace("'", "\\'") }}', '{{ url_for('static', filename=food.image) if food.image else 'https://via.placeholder.com/400x300' }}', '{{ "%.2f"|format(food.price) }}')">
+                Ver más
+              </button>
+              <a href="https://wa.me/593981070664?text=Hola%2C%20quiero%20ordenar%20*{{ food.name|urlencode }}*%20por%20${{ "%.2f"|format(food.price) }}"
+                target="_blank" class="text-sm underline text-white/70 hover:text-white">WhatsApp</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+        {% endfor %}
+      </div>
+    </main>
+
+    <!-- Sección "Story" -->
+    <section class="px-4 sm:px-6 lg:px-8 pb-16">
+      <h2 class="text-3xl font-extrabold gold-text mb-3" style="font-family:'Playfair Display', serif;">Nuestra Historia</h2>
+      <div class="divider mb-6"></div>
+      <p class="text-white/70 max-w-3xl">
+        Nacimos con la idea de elevar la comida rápida: sabores potentes, técnica cuidada y una estética que celebra el detalle.
+        En LUIGGI'S cada plato cuenta una historia — rápida, sí, pero con clase.
+      </p>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-black/80 border-t border-white/10 text-center py-8">
+    <p class="text-white/60 text-sm">© 2025 LUIGGI'S — Todos los derechos reservados</p>
+    <p class="text-white/40 text-xs">Pimampiro · Ecuador · <a class="underline text-white/50 hover:text-white" href="tel:+593981070664">098-107-0664</a></p>
+  </footer>
+
+  <!-- Modal producto -->
+<div id="modal" class="fixed inset-0 hidden items-center justify-center p-4 z-50">
+  <div class="absolute inset-0 bg-black/70" onclick="closeItem()"></div>
+
+  <div class="relative z-10 w-full max-w-lg p-[2px] rounded-3xl bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-2xl">
+    <div class="bg-black/95 rounded-3xl overflow-hidden">
+
+      <div class="flex flex-col sm:flex-row">
+
+        <img id="mImg" src="" alt="plato" 
+             class="w-full sm:w-48 h-48 object-cover rounded-l-3xl">
+
+        <div class="p-6 grow">
+          <h3 id="mTitle" class="text-2xl font-extrabold text-white"></h3>
+
+          <p id="mDesc" class="text-white/70 text-sm mt-2 leading-snug"></p>
+
+          <div class="mt-5 flex items-center justify-between flex-wrap gap-3">
+
+            <!-- PRECIO MÁS GRANDE Y MÁS ELEGANTE -->
+            <span id="mPrice" 
+                  class="text-3xl font-black text-yellow-400 tracking-wide drop-shadow">
+            </span>
+
+            <!-- BOTÓN WHATSAPP MÁS BONITO -->
+            <a id="wspBtn" target="_blank" 
+               class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-yellow-300 to-yellow-500 text-black font-semibold text-sm shadow-lg hover:scale-105 transition">
+              Pedir por WhatsApp
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTÓN CERRAR -->
+      <button class="absolute -top-3 -right-3 bg-white/95 text-black rounded-full w-10 h-10 font-bold hover:bg-white transition"
+              onclick="closeItem()">×</button>
+
+    </div>
+  </div>
+</div>
+
+
+  <script>
+  // Sidebar
+  const menuBtn   = document.getElementById('menuBtn');   // ← puede NO existir
+  const sidebar   = document.getElementById('sidebar');
+  const overlay   = document.getElementById('overlay');
+  const closeMenu = document.getElementById('closeMenu');
+
+  // Abrir sidebar SOLO si el botón existe
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    });
+  }
+
+  // Cerrar sidebar (estos SÍ deben existir)
+  if (closeMenu) {
+    closeMenu.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  }
+
+  // Tabs por categoría
+  const tabs = document.querySelectorAll('.tab');
+  const grid = document.getElementById('menuGrid');
+
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+
+      const cat = t.dataset.cat;
+      const cards = Array.from(grid.children);
+
+      cards.forEach(card => {
+        const ok = (cat === 'all') || (card.dataset.cat === cat);
+        card.classList.toggle('hidden', !ok);
+      });
+
+      window.scrollTo({
+        top: document.querySelector('nav').offsetTop,
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  // Buscador
+  const s = document.getElementById('search');
+  const c = document.getElementById('clear');
+
+  if (s) {
+    s.addEventListener('input',()=>filterByText(s.value));
+  }
+  if (c) {
+    c.addEventListener('click',()=>{ 
+      s.value=''; 
+      filterByText(''); 
+    });
+  }
+
+  function filterByText(q){
+    const cards = Array.from(grid.children);
+    const txt = q.toLowerCase().trim();
+    cards.forEach(card=>{
+      const has = card.dataset.name.includes(txt);
+      card.classList.toggle('hidden', !has);
+    });
+  }
+
+  // Modal
+  function openItem(title, desc, img, price){
+    document.getElementById('mTitle').textContent = title;
+    document.getElementById('mDesc').textContent  = desc;
+    document.getElementById('mImg').src           = img;
+    document.getElementById('mPrice').textContent = `$ ${price}`;
+    const text = encodeURIComponent(`Hola, quiero ordenar *${title}* por $${price}`);
+    document.getElementById('wspBtn').href        = `https://wa.me/593981070664?text=${text}`;
+    const modal = document.getElementById('modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeItem(){
+    const modal = document.getElementById('modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  window.openItem = openItem;
+  window.closeItem = closeItem;
+</script>
+
+</body>
+</html>

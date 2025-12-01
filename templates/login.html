@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio de Sesión | Luigi's Ristorante</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background-image: url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80");
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.55);
+      }
+
+      .login-box {
+        position: relative;
+        z-index: 1;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 40px;
+        border-radius: 14px;
+        width: 360px;
+        text-align: center;
+        border: 2px solid gold;
+        box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
+      }
+
+      .logo {
+        width: 120px;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px gold;
+      }
+
+      .login-box h2 {
+        margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 1.9em;
+        color: gold;
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+      }
+
+      .login-box input {
+        width: 100%;
+        padding: 12px;
+        margin: 12px 0;
+        border: 1px solid #d4af37;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: 0.3s;
+      }
+
+      .login-box input:focus {
+        border-color: gold;
+        outline: none;
+        box-shadow: 0 0 6px gold;
+      }
+
+      .login-box button {
+        background-color: goldenrod;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1em;
+        width: 100%;
+        transition: 0.3s;
+        font-weight: 600;
+      }
+
+      .login-box button:hover {
+        background-color: #e4b128;
+      }
+
+      .login-box p {
+        margin-top: 18px;
+        font-size: 0.95em;
+        color: #444;
+      }
+
+      .login-box p a {
+        color: #cfa000;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .login-box p a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay"></div>
+
+    <div class="login-box">
+      <!-- LOGO -->
+      <img
+        src="{{ url_for('static', filename='images/Logo.jpg') }}"
+        class="logo"
+      />
+
+      <h2>Luigi’s Restaurante</h2>
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <input
+          id="Correo"
+          name="Correo"
+          type="email"
+          placeholder="Correo electrónico"
+          required
+        />
+        <input
+          id="Contra"
+          name="Contra"
+          type="password"
+          placeholder="Contraseña"
+          required
+        />
+        <button type="submit">Ingresar</button>
+      </form>
+
+      <p>¿No tienes cuenta? <a href="/reg">Regístrate aquí</a></p>
+    </div>
+  </body>
+</html>
