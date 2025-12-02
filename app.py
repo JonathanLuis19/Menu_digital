@@ -6,6 +6,12 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
+
 # =======================
 #   CONFIGURACIÓN
 # =======================
@@ -333,9 +339,5 @@ def menu():
     return render_template("menu.html", foods_by_category=foods_by_category)
 
 
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
 
 
