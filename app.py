@@ -323,7 +323,7 @@ def editar_categoria(id):
     return redirect(url_for('ver'))
 @app.route("/categoria/eliminar/<int:id>", methods=['POST'])
 @login_required
-def eliminar_categoria(id):
+def delete_categoria(id):
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
     
