@@ -365,6 +365,101 @@
     .modal-close:hover {
       background: rgba(255,107,107,.3);
     }
+    /* Estilos para la sección de categorías */
+    .categories-section {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+      border-top: 2px solid rgba(243,210,122,.2);
+      margin-top: 20px;
+    }
+
+    .categories-section.active {
+      max-height: 600px;
+      opacity: 1;
+      padding-top: 20px;
+    }
+
+    .category-item {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .category-item:hover {
+      background: rgba(255,255,255,.06);
+      border-color: rgba(243,210,122,.3);
+      transform: translateX(5px);
+    }
+
+    .category-info {
+      flex: 1;
+    }
+
+    .category-name {
+      font-size: 1.1rem;
+      color: var(--gold-1);
+      font-weight: 600;
+    }
+
+    .category-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .categories-list {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .categories-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .categories-list::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.05);
+      border-radius: 10px;
+    }
+
+    .categories-list::-webkit-scrollbar-thumb {
+      background: var(--gold-3);
+      border-radius: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: rgba(255,255,255,.5);
+    }
+
+    .empty-state i {
+      font-size: 40px;
+      margin-bottom: 10px;
+      opacity: 0.3;
+    }
+
+    .chevron {
+      transition: transform 0.3s ease;
+    }
+
+    .chevron.rotated {
+      transform: rotate(180deg);
+    }
     
     @media (max-width: 768px) {
       body {
@@ -517,9 +612,63 @@
 
       {% endif %}
 
-      <button class="btn-category" onclick="openCategoryModal()">
-        <i class="fas fa-tags"></i> Gestionar Categorías
-      </button>
+      <!-- BOTÓN PARA DESPLEGAR CATEGORÍAS -->
+        <button class="btn-category" onclick="toggleCategories()">
+          <span><i class="fas fa-tags"></i> Gestionar Categorías</span>
+          <i class="fas fa-chevron-down chevron" id="chevronIcon"></i>
+        </button>
+
+        <!-- SECCIÓN DESPLEGABLE DE CATEGORÍAS -->
+        <div class="categories-section" id="categoriesSection">
+          <!-- Formulario para agregar categoría -->
+           <h2>
+        <i class="fas fa-plus-circle"></i>
+        Categorias
+      </h2>
+          <form method="POST" action="{{ url_for('tipo') }}" style="margin-bottom: 20px;">
+            <input type="text" name="type" placeholder="Nueva categoría (ej: Postres, Bebidas)" required>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-plus"></i> Agregar Categoría
+            </button>
+          </form>
+
+          <!-- Lista de categorías existentes -->
+          <h3 style="color: var(--gold-2); margin-bottom: 15px; font-size: 1rem;">
+            <i class="fas fa-list"></i> Categorías ({{ categories|length }})
+          </h3>
+          
+          <div class="categories-list">
+            {% if categories %}
+              {% for cat in categories %}
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-name">{{ cat.type }}</div>
+                  </div>
+                  <div class="category-actions">
+                    <button class="btn-icon btn-edit btn-small" 
+                            onclick="editarCategoria({{ cat.id }}, '{{ cat.type }}')" 
+                            title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <form method="POST" 
+                          action="{{ url_for('eliminar_categoria', id=cat.id) }}" 
+                          style="margin: 0; display: inline-block;" 
+                          onsubmit="return confirm('¿Seguro que deseas eliminar la categoría &quot;{{ cat.type }}&quot;?');">
+                      <button type="submit" class="btn-icon btn-delete btn-small" title="Eliminar">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No hay categorías</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
     </div>
   </div>
 
@@ -571,38 +720,77 @@
 
   </div>
 
-  <!-- Modal Categorías -->
-  <div id="categoryModal" class="modal">
+    <!-- Modal para EDITAR Categoría -->
+  <div id="editCategoryModal" class="modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+      <button class="modal-close" onclick="closeEditModal()">&times;</button>
       <h2 style="margin-bottom: 20px; text-align: center;">
-        <i class="fas fa-tags"></i> Agregar Categoría
+        <i class="fas fa-edit"></i> Editar Categoría
       </h2>
-      <form method="POST" action="{{ url_for('tipo') }}">
-        <input type="text" name="type" placeholder="Nombre de la categoría (ej: Postres, Bebidas)" required style="width: 100%; margin-bottom: 15px; padding: 14px; border: 2px solid rgba(243,210,122,.2); border-radius: 8px; font-size: 14px; background: rgba(255,255,255,.05); color: var(--ink);">
-        <button type="submit" class="btn-submit">
-          <i class="fas fa-plus"></i> Agregar Categoría
-        </button>
+      <form id="editCategoryForm" method="POST">
+        <input type="text" 
+               id="editCategoryName" 
+               name="type" 
+               placeholder="Nombre de la categoría" 
+               required 
+               style="width: 100%; margin-bottom: 15px; padding: 14px; border: 2px solid rgba(243,210,122,.2); border-radius: 8px; font-size: 14px; background: rgba(255,255,255,.05); color: var(--ink);">
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-cancel" onclick="closeEditModal()" style="margin: 0;">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button type="submit" class="btn-submit" style="margin: 0;">
+            <i class="fas fa-save"></i> Guardar
+          </button>
+        </div>
       </form>
     </div>
   </div>
 
-  <script>
-    function openCategoryModal() {
-      document.getElementById('categoryModal').classList.add('active');
+<script>
+    function toggleCategories() {
+      const section = document.getElementById('categoriesSection');
+      const chevron = document.getElementById('chevronIcon');
+      
+      section.classList.toggle('active');
+      chevron.classList.toggle('rotated');
     }
 
-    function closeCategoryModal() {
-      document.getElementById('categoryModal').classList.remove('active');
+    function editarCategoria(id, nombreActual) {
+      const modal = document.getElementById('editCategoryModal');
+      const form = document.getElementById('editCategoryForm');
+      const input = document.getElementById('editCategoryName');
+      
+      form.action = `/categoria/editar/${id}`;
+      input.value = nombreActual;
+      modal.classList.add('active');
+      input.focus();
     }
 
-    // Cerrar modal al hacer clic fuera
-    document.getElementById('categoryModal').addEventListener('click', function(e) {
+    function closeEditModal() {
+      document.getElementById('editCategoryModal').classList.remove('active');
+    }
+
+    document.getElementById('editCategoryModal').addEventListener('click', function(e) {
       if (e.target === this) {
-        closeCategoryModal();
+        closeEditModal();
       }
     });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeEditModal();
+      }
+    });
+
+    setTimeout(() => {
+      const flashes = document.querySelectorAll('.flash');
+      flashes.forEach(flash => {
+        flash.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => flash.remove(), 300);
+      });
+    }, 5000);
   </script>
+
 
 </body>
 </html>
