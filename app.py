@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
-
 # =======================
 #   CONFIGURACIÓN
 # =======================
@@ -303,6 +302,46 @@ def tipo():
     return redirect(url_for("ver"))
 
 
+@app.route("/categoria/editar/<int:id>", methods=['POST'])
+@login_required
+def editar_categoria(id):
+    nuevo_nombre = request.form.get('type')
+    
+    if not nuevo_nombre:
+        flash('El nombre no puede estar vacío', 'error')
+        return redirect(url_for('ver'))
+    
+    conexion = get_connection()
+    cursor = conexion.cursor()
+    
+    cursor.execute("UPDATE category SET type = %s WHERE id = %s", (nuevo_nombre, id))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+    
+    flash('Categoría actualizada exitosamente', 'success')
+    return redirect(url_for('ver'))
+@app.route("/categoria/eliminar/<int:id>", methods=['POST'])
+@login_required
+def eliminar_categoria(id):
+    conexion = get_connection()
+    cursor = conexion.cursor(dictionary=True)
+    
+    # Verificar si tiene comidas
+    cursor.execute("SELECT COUNT(*) as total FROM food WHERE id_category = %s", (id,))
+    resultado = cursor.fetchone()
+    
+    if resultado['total'] > 0:
+        flash('No puedes eliminar esta categoría porque tiene comidas', 'warning')
+        return redirect(url_for('ver'))
+    
+    cursor.execute("DELETE FROM category WHERE id = %s", (id,))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+    
+    flash('Categoría eliminada exitosamente', 'success')
+    return redirect(url_for('ver'))
 # =======================
 #   MENU PÚBLICO
 # =======================
