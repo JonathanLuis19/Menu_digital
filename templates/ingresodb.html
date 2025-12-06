@@ -651,7 +651,7 @@
                       <i class="fas fa-edit"></i>
                     </button>
                     <form method="POST" 
-                          action="{{ url_for('eliminar_categoria', id=cat.id) }}" 
+                          action="{{ url_for('delete_categoria', id=cat.id) }}" 
                           style="margin: 0; display: inline-block;" 
                           onsubmit="return confirm('¿Seguro que deseas eliminar la categoría &quot;{{ cat.type }}&quot;?');">
                       <button type="submit" class="btn-icon btn-delete btn-small" title="Eliminar">
