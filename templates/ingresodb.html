@@ -687,7 +687,7 @@
         <div class="card">
           
           {% if c.image %}
-          <img src="{{ url_for('static', filename=c.images) }}"
+          <img src="{{ url_for('static', filename=c.uploads) }}"
                alt="{{ c.name }}"
                onerror="this.src='https://via.placeholder.com/250x180/0a0a0b/f3d27a?text=Sin+Imagen'">
           {% else %}
